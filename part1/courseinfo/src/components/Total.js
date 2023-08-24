@@ -1,10 +1,8 @@
-const Total = (props) => {
-    let sum = 0
-    props.parts.forEach(part => {
-        sum = sum + part.exercises
-    });
+const Total = ({parts}) => {
+    const total = 
+        parts.reduce((s, p) => s + p.exercises, 0)
     return (
-        <p>Number of exercises {sum}</p>
+        <h4>Number of exercises {total}</h4>
     )
   }
   export default Total
