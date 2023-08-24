@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-// Passing state - to child components
+// Component state, event handlers : Passing state - to child components
 const Counter = () => {
     const [ counter, setCounter ] = useState(0)
   

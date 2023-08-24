@@ -2,6 +2,7 @@ import Content from "./components/Content"
 import Header from "./components/Header"
 import Total from "./components/Total"
 import Counter from "./tutorial-components/Counter"
+import LeftRightClick from "./tutorial-components/LeftRightClick"
 const App = () => {
   const course = {
     name: 'Half Stack application development',
@@ -29,6 +30,7 @@ const App = () => {
     </div>
     <div className="tutorial">
       <Counter/>
+      <LeftRightClick/>
     </div>
   </>
   )
