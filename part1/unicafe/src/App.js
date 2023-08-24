@@ -7,9 +7,28 @@ const App = () => {
   const [bad, setBad] = useState(0)
 
   return (
+    <>
     <div>
-      code here
+      <h1>give feedback</h1>
+      <div className='feedback-btns'>
+        <FeedbackButton setFn={() => setGood(good + 1)} text='good'/>
+        <FeedbackButton setFn={() => setNeutral(neutral + 1)} text='neutral'/>
+        <FeedbackButton setFn={() => setBad(bad + 1)} text='bad'/>
+      </div>
     </div>
+    <div>
+      <h1>Statistics</h1>
+      <p>good {good}</p>
+      <p>neutral {neutral}</p>
+      <p>bad {bad}</p>
+    </div>
+    </>
+  )
+}
+
+const FeedbackButton = ({setFn, text}) => {
+  return (
+      <button onClick={setFn}>{text}</button>
   )
 }
 
