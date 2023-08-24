@@ -17,20 +17,29 @@ const App = () => {
   const [votedCounts, setVotedCount] = useState(initvoted)
 
   function getRandomInt(max) {
+    console.log('getRandomInt current index:', Math.floor(Math.random() * max))
     return Math.floor(Math.random() * max);
   }
   const setVotedCountFn = () => {
     let copy = [...votedCounts]
-    //console.log('setVotedCountFn copy before:', copy)
     copy[selected] = copy[selected] + 1
-    //console.log('setVotedCountFn copy after:', copy)
+    console.log('setVotedCountFn copy after:', copy)
     setVotedCount(copy)
+  }
+  const getMostVotesIndex = () => {
+    const maxVotes = Math.max(...votedCounts)
+    const index = votedCounts.indexOf(maxVotes)
+    console.log('getMostVotesIndex index:', index)
+    return index > -1 ? index : 0
   }
   return (
     <div>
-      <h1>{anecdotes[selected]}</h1>
+      <h1>Anecdotes of the day</h1>
+      <p>{anecdotes[selected]}</p>
       <button onClick={setVotedCountFn}>vote</button>
       <button onClick={() => setSelected(getRandomInt(anecdotes.length))}>next anecdotes</button>
+      <h1>Anecdotes with most votes</h1>
+      <p>{anecdotes[getMostVotesIndex()]}</p>
     </div>
   )
 }
