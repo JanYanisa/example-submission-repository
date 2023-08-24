@@ -11,14 +11,25 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
+  const initvoted = new Array(anecdotes.length).fill(0)
    
   const [selected, setSelected] = useState(0)
+  const [votedCounts, setVotedCount] = useState(initvoted)
+
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);
+  }
+  const setVotedCountFn = () => {
+    let copy = [...votedCounts]
+    //console.log('setVotedCountFn copy before:', copy)
+    copy[selected] = copy[selected] + 1
+    //console.log('setVotedCountFn copy after:', copy)
+    setVotedCount(copy)
   }
   return (
     <div>
       <h1>{anecdotes[selected]}</h1>
+      <button onClick={setVotedCountFn}>vote</button>
       <button onClick={() => setSelected(getRandomInt(anecdotes.length))}>next anecdotes</button>
     </div>
   )
