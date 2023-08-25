@@ -1,19 +1,27 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',
-      number: '040-1234567' }
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setfilterName] = useState('')
 
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled', response.data)
+        setPersons(response.data)
+      })
+  }, [])
+
   const personsToShow = filterName === ''
     ? persons
-    : persons.filter(persons => persons.name.includes(filterName))
+    : persons.filter(persons => persons.name.toLowerCase().includes(filterName))
 
   const handlNewNameChange = (event) => {
     const value = event.target.value
@@ -36,7 +44,8 @@ const App = () => {
     event.preventDefault()
     const newNameObject = {
       name: newName,
-      number: newNumber
+      number: newNumber,
+      id : persons.length + 1
     }
     setPersons(persons.concat(newNameObject))
     setNewName('')
