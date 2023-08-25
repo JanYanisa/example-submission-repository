@@ -7,6 +7,11 @@ const App = () => {
   ]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [filterName, setfilterName] = useState('')
+
+  const personsToShow = filterName === ''
+    ? persons
+    : persons.filter(persons => persons.name.includes(filterName))
 
   const handlNewNameChange = (event) => {
     const value = event.target.value
@@ -22,6 +27,9 @@ const App = () => {
   const handlNewNumberChange = (event) => {
     setNewNumber(event.target.value)
   }
+  const handlfilterNameChange = (event) => {
+    setfilterName(event.target.value)
+  }
   const addNewPerson = (event) => {
     event.preventDefault()
     const newNameObject = {
@@ -35,6 +43,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <div>
+          filter shown with: <input value={filterName} onChange={handlfilterNameChange} placeholder="enter filter name" />
+        </div>
+      <h2>add a new</h2>
       <form onSubmit={addNewPerson}>
         <div>
           name: <input value={newName} onChange={handlNewNameChange} placeholder="enter name" />
@@ -47,7 +59,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map(person => <p key={person.name}>{person.name} {person.number}</p>)}
+      {personsToShow.map(person => <p key={person.name}>{person.name} {person.number}</p>)}
     </div>
   )
 }
