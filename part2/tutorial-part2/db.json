@@ -19,6 +19,16 @@
       "id": 4,
       "content": "test edit db",
       "important": false
+    },
+    {
+      "content": "test234 POST",
+      "important": true,
+      "id": 5
+    },
+    {
+      "content": "add new by POST",
+      "important": false,
+      "id": 6
     }
   ]
 }
