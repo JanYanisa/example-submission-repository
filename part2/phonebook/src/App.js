@@ -8,6 +8,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setfilterName] = useState('')
+  const [msg, setMsg] = useState(null)
 
   useEffect(() => {
     personsService
@@ -44,6 +45,12 @@ const App = () => {
           setPersons(persons.concat(res))
           setNewName('')
           setNewNumber('')
+          setMsg(
+            `Added ${res.name}`
+          )
+          setTimeout(() => {
+            setMsg(null)
+          }, 5000)
         })
         .catch(err => {
           console.log(err)
@@ -66,6 +73,12 @@ const App = () => {
               setPersons(currentPersons)
               setNewName('')
               setNewNumber('')
+              setMsg(
+                `Added new number ${res.number} to ${res.name}`
+              )
+              setTimeout(() => {
+                setMsg(null)
+              }, 5000)
             })
             .catch(err => {
               console.log(err)
@@ -76,6 +89,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={msg} />
       <Filter filterName={filterName} handlfilterNameChange={handlfilterNameChange}/>
       <h3>Add a new</h3>
       <PersonForm addNewPerson={addNewPerson} newName={newName} handlNewNameChange={handlNewNameChange} newNumber={newNumber} handlNewNumberChange={handlNewNumberChange}/>
@@ -86,3 +100,15 @@ const App = () => {
 }
 
 export default App
+
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='notification'>
+      {message}
+    </div>
+  )
+}
