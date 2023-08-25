@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
@@ -23,15 +22,7 @@ const App = () => {
     : persons.filter(persons => persons.name.toLowerCase().includes(filterName))
 
   const handlNewNameChange = (event) => {
-    const value = event.target.value
-    setNewName(value)
-    persons.every(person => {
-      if (person.name === value) {
-        alert(`${newName} is already added to phonebook`)
-        return false
-      }
-      return true
-    })
+    setNewName(event.target.value)
   }
   const handlNewNumberChange = (event) => {
     setNewNumber(event.target.value)
@@ -41,17 +32,46 @@ const App = () => {
   }
   const addNewPerson = (event) => {
     event.preventDefault()
-    const newNameObject = {
-      name: newName,
-      number: newNumber,
+    const sameNameIndex = persons.findIndex(person => person.name === newName)
+    if (sameNameIndex === -1 ) {
+      const newNameObject = {
+        name: newName,
+        number: newNumber,
+      }
+      personsService
+        .create(newNameObject)
+        .then((res) => {
+          setPersons(persons.concat(res))
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    } else {
+        if (window.confirm(`${newName} is already added to phonebook, replace the old number with new one?`)) {
+          const changedName = {...persons[sameNameIndex], number: newNumber}
+          personsService
+            .update(changedName.id, changedName)
+            .then(res => {
+              console.log('replace res',res)
+              let currentPersons = []
+              persons.forEach((person, i) => {
+                if (person.id === res.id) {
+                  currentPersons.push(res)
+                } else {
+                  currentPersons.push(person)
+                }
+              })
+              setPersons(currentPersons)
+              setNewName('')
+              setNewNumber('')
+            })
+            .catch(err => {
+              console.log(err)
+            })
+        }
     }
-    personsService
-    .create(newNameObject)
-    .then((res) => {
-      setPersons(persons.concat(res))
-      setNewName('')
-      setNewNumber('')
-    })
   }
   return (
     <div>
