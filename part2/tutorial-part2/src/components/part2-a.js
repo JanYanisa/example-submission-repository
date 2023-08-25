@@ -4,9 +4,11 @@ import notesService from '../services/notes.service'
 
 const Part2a = () => {
   const initNewNote = 'a new note...'
-  const [notes, setNotes] = useState([])
+  const [notes, setNotes] = useState(null)
   const [newNote, setNewNote] = useState(initNewNote)
   const [showAll, setShowAll] = useState(true)
+  // const [errorMessage, setErrorMessage] = useState('some error happened...')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const hook = () => {
     notesService
@@ -16,7 +18,9 @@ const Part2a = () => {
       })
   }
   useEffect(hook, [])
-
+  if (!notes) { 
+    return null 
+  }
   const notesToShow = showAll
     ? notes
     : notes.filter(note => note.important)
@@ -48,16 +52,19 @@ const Part2a = () => {
         setNotes(notes.map(n => n.id !== id ? n : response))
       })
       .catch(error => {
-        console.log('error toggleImportanceOf', error)
-        alert(
-          `the note '${note.content}' was already deleted from server`
+        setErrorMessage(
+          `Note '${note.content}' was already removed from server`
         )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
         setNotes(notes.filter(n => n.id !== id))
       })
   }
   return (
     <div>
       <h1>Notes</h1>
+      <Notification message={errorMessage} />
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all' }
@@ -72,8 +79,35 @@ const Part2a = () => {
         <input value={newNote} onChange={handleNoteChange} placeholder={initNewNote}/>
         <button type="submit">save</button>
       </form>  
+      <Footer />
     </div>
   )
   }
   
   export default Part2a;
+
+  const Notification = ({ message }) => {
+    if (message === null) {
+      return null
+    }
+  
+    return (
+      <div className='error'>
+        {message}
+      </div>
+    )
+  }
+
+  const Footer = () => {
+    const footerStyle = {
+      color: 'green',
+      fontStyle: 'italic',
+      fontSize: 16
+    }
+    return (
+      <div style={footerStyle}>
+        <br />
+        <em>Note app, Department of Computer Science, University of Helsinki 2023</em>
+      </div>
+    )
+  }
