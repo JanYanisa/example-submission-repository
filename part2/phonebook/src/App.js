@@ -45,9 +45,7 @@ const App = () => {
           setPersons(persons.concat(res))
           setNewName('')
           setNewNumber('')
-          setMsg(
-            `Added ${res.name}`
-          )
+          setMsg({type : 'success', msg:`Added ${res.name}`})
           setTimeout(() => {
             setMsg(null)
           }, 5000)
@@ -73,19 +71,43 @@ const App = () => {
               setPersons(currentPersons)
               setNewName('')
               setNewNumber('')
-              setMsg(
-                `Added new number ${res.number} to ${res.name}`
-              )
+              setMsg({type : 'success', msg:`Added new number ${res.number} to ${res.name}`})
               setTimeout(() => {
                 setMsg(null)
               }, 5000)
             })
             .catch(err => {
               console.log(err)
+              setMsg({type : 'error', msg:`Added new number error`})
+              setTimeout(() => {
+                setMsg(null)
+              }, 5000)
             })
         }
     }
   }
+  const deletePerson = (name, id) => {
+    if (window.confirm(`Delete ${name}?`)) {
+        console.log('delete!!', name, id)
+        personsService
+          .deleteById(id)
+          .then( (res) => {
+            console.log('deleteByID res', res)
+            setPersons(persons.filter(person => person.id !== id))
+            setMsg({type : 'success', msg:`Removed ${name}`})
+              setTimeout(() => {
+                setMsg(null)
+              }, 5000)
+        })
+        .catch(err => {
+          setMsg({type : 'error', msg:`Information of ${name} has already been removed from server`})
+          setTimeout(() => {
+            setMsg(null)
+          }, 5000)
+        })
+        
+    }
+}
   return (
     <div>
       <h2>Phonebook</h2>
@@ -94,7 +116,7 @@ const App = () => {
       <h3>Add a new</h3>
       <PersonForm addNewPerson={addNewPerson} newName={newName} handlNewNameChange={handlNewNameChange} newNumber={newNumber} handlNewNumberChange={handlNewNumberChange}/>
       <h3>Numbers</h3>
-      <Persons personsToShow={personsToShow} persons={persons} setPersons={setPersons}/>
+      <Persons personsToShow={personsToShow} deletePersonFn={deletePerson}/>
     </div>
   )
 }
@@ -105,10 +127,9 @@ const Notification = ({ message }) => {
   if (message === null) {
     return null
   }
-
   return (
-    <div className='notification'>
-      {message}
+    <div className = {`notification ${message.type}`}>
+      {message.msg}
     </div>
   )
 }
