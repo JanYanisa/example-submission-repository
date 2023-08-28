@@ -7,12 +7,12 @@ const app = express()
 app.use(express.static('build'))
 app.use(express.json())
 const requestLogger = (request, response, next) => {
-    console.log('Method:', request.method)
-    console.log('Path:  ', request.path)
-    console.log('Body:  ', request.body)
-    console.log('---')
-    next()
-  }
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
 app.use(requestLogger)
 app.use(cors())
 
@@ -35,26 +35,26 @@ app.get('/api/notes/:id', (request, response, next) => {
 })
 
 app.delete('/api/notes/:id', (request, response, next) => {
-    Note.findByIdAndDelete(request.params.id)
-    .then(note => {
+  Note.findByIdAndDelete(request.params.id)
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
 })
 
 app.put('/api/notes/:id', (request, response, next) => {
-    const { content, important } = request.body
-    Note.findByIdAndUpdate(
-      request.params.id, 
-      { content, important },
-      { new: true, runValidators: true, context: 'query' }
-      )
+  const { content, important } = request.body
+  Note.findByIdAndUpdate(
+    request.params.id,
+    { content, important },
+    { new: true, runValidators: true, context: 'query' }
+  )
     .then(note => {
       response.json(note)
     })
     .catch(error => next(error))
 })
-  
+
 app.post('/api/notes', (request, response, next) => {
   const body = request.body
 
@@ -68,10 +68,10 @@ app.post('/api/notes', (request, response, next) => {
   })
 
   note.save()
-  .then(savedNote => {
-    response.json(savedNote)
-  })
-  .catch(error => next(error))
+    .then(savedNote => {
+      response.json(savedNote)
+    })
+    .catch(error => next(error))
 })
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
@@ -93,5 +93,5 @@ app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
-console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${PORT}`)
 })
