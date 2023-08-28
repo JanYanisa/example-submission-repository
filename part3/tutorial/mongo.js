@@ -16,13 +16,27 @@ const noteSchema = new mongoose.Schema({
 })
 
 const Note = mongoose.model('Note', noteSchema)
+//https://www.geeksforgeeks.org/how-to-parse-command-line-arguments-in-node-js/
+// How to parse command line arguments in node.js
+const arg = process.argv.slice(2)
+if (arg.length > 0) arg[1] = (/true/).test(arg[1]);
+console.log('arg', arg)
 
-const note = new Note({
-  content: 'HTML is Easy',
-  important: true,
-})
+//for create new data into db
+// const note = new Note({
+//   content: arg[0] || 'HTML is Not that Easy',
+//   important: arg.length > 0 ? arg[1] : true,
+// })
 
-note.save().then(result => {
-  console.log('note saved!')
-  mongoose.connection.close()
+// note.save().then(result => {
+//   console.log('note saved!')
+//   mongoose.connection.close()
+// })
+
+// fetching data from db
+Note.find({}).then(result => {
+    result.forEach(note => {
+        console.log(note)
+    })
+    mongoose.connection.close()
 })
