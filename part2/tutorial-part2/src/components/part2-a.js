@@ -47,7 +47,13 @@ const Part2a = () => {
       })
       .catch(err => {
         // console.log(err.response.data.error)
-        setErrorMessage(err.response.data.error)
+        const errMsg = err.response.data.error
+        if (errMsg.includes('token expired')) {
+          setErrorMessage(`${errMsg}, try log in again`)
+          logOut()
+        } else {
+          setErrorMessage(errMsg)
+        }
         setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
