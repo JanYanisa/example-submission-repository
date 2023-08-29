@@ -2,6 +2,7 @@ import Note from "./Note";
 import { useState, useEffect } from 'react'
 import notesService from '../services/notes.service'
 import loginService from '../services/login.service'
+import LoginForm from "./LoginForm";
 
 const Part2a = () => {
   const initNewNote = 'a new note...'
@@ -13,6 +14,7 @@ const Part2a = () => {
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [loginVisible, setLoginVisible] = useState(false)
 
   const hook = () => {
     notesService
@@ -38,6 +40,8 @@ const Part2a = () => {
   const notesToShow = showAll
     ? notes
     : notes.filter(note => note.important)
+  const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+  const showWhenVisible = { display: loginVisible ? '' : 'none' }
 
   const handleNoteChange = (event) => {
     setNewNote(event.target.value)
@@ -54,6 +58,13 @@ const Part2a = () => {
       .then(response => {
         setNotes(notes.concat(response))
         setNewNote('')
+      })
+      .catch(err => {
+        // console.log(err.response.data.error)
+        setErrorMessage(err.response.data.error)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })
   }
   const toggleImportanceOf = (id) => {
@@ -105,13 +116,21 @@ const Part2a = () => {
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
-      {user === null ? 
-        <LoginForm handleLogin={handleLogin} username={username} setUsername={setUsername} password={password} setPassword={setPassword}/>
+      {user === null ?
+        <div>
+          <div style={hideWhenVisible}>
+            <button onClick={() => setLoginVisible(true)}>log in</button>
+          </div>
+          <div style={showWhenVisible}>
+            <LoginForm handleLogin={handleLogin} username={username} setUsername={setUsername} password={password} setPassword={setPassword}/>
+            <button onClick={() => setLoginVisible(false)}>cancel</button>
+          </div>
+        </div>
         : <div>
-          <p>{user.name} logged in</p>
-          <button onClick={() => logOut()}>
-            log-out
-          </button>
+            <p>{user.name} logged in</p>
+            <button onClick={() => logOut()}>
+              log-out
+            </button>
           <NoteForm addNote={addNote} newNote={newNote} handleNoteChange={handleNoteChange} initNewNote={initNewNote}/>
         </div>
         }
@@ -156,32 +175,6 @@ const Part2a = () => {
         <em>Note app, Department of Computer Science, University of Helsinki 2023</em>
       </div>
     )
-  }
-
-  const LoginForm = ({handleLogin, username, setUsername, password, setPassword}) => {
-    return (
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-            <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-            <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>  
-    )    
   }
 
   const NoteForm = ({addNote, newNote, handleNoteChange, initNewNote}) => {
