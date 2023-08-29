@@ -5,7 +5,7 @@ function App() {
     <div className="App">
       <Part2a/>
     </div>
-  );
+  )
 }
 
 export default App
