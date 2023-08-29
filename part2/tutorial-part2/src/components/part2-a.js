@@ -3,18 +3,14 @@ import { useState, useEffect } from 'react'
 import notesService from '../services/notes.service'
 import loginService from '../services/login.service'
 import LoginForm from "./LoginForm";
-
+import Togglable from "./Togglable"
+import NoteForm from "./NoteForm";
 const Part2a = () => {
-  const initNewNote = 'a new note...'
   const [notes, setNotes] = useState(null)
-  const [newNote, setNewNote] = useState(initNewNote)
   const [showAll, setShowAll] = useState(true)
   // const [errorMessage, setErrorMessage] = useState('some error happened...')
   const [errorMessage, setErrorMessage] = useState(null)
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
 
   const hook = () => {
     notesService
@@ -40,24 +36,12 @@ const Part2a = () => {
   const notesToShow = showAll
     ? notes
     : notes.filter(note => note.important)
-  const hideWhenVisible = { display: loginVisible ? 'none' : '' }
-  const showWhenVisible = { display: loginVisible ? '' : 'none' }
 
-  const handleNoteChange = (event) => {
-    setNewNote(event.target.value)
-  }
-
-  const addNote = (event) => {
-    event.preventDefault()
-    const noteObject = {
-      content: newNote,
-      important: Math.random() < 0.5,
-    }
+  const addNote = (noteObject) => {
     notesService
       .create(noteObject)
       .then(response => {
         setNotes(notes.concat(response))
-        setNewNote('')
       })
       .catch(err => {
         // console.log(err.response.data.error)
@@ -86,20 +70,14 @@ const Part2a = () => {
         setNotes(notes.filter(n => n.id !== id))
       })
   }
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    
+  const handleLogin = async (userObject) => {
     try {
-      const user = await loginService.login({
-        username, password,
-      })
+      const user = await loginService.login(userObject)
       window.localStorage.setItem(
         'loggedNoteappUser', JSON.stringify(user)
       )
       notesService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
     } catch (exception) {
       setErrorMessage('Wrong credentials')
       setTimeout(() => {
@@ -118,20 +96,18 @@ const Part2a = () => {
       <Notification message={errorMessage} />
       {user === null ?
         <div>
-          <div style={hideWhenVisible}>
-            <button onClick={() => setLoginVisible(true)}>log in</button>
-          </div>
-          <div style={showWhenVisible}>
-            <LoginForm handleLogin={handleLogin} username={username} setUsername={setUsername} password={password} setPassword={setPassword}/>
-            <button onClick={() => setLoginVisible(false)}>cancel</button>
-          </div>
+          <Togglable buttonLabel="log in">
+            <LoginForm handleLoginFn={handleLogin}/>
+          </Togglable>
         </div>
         : <div>
             <p>{user.name} logged in</p>
             <button onClick={() => logOut()}>
               log-out
             </button>
-          <NoteForm addNote={addNote} newNote={newNote} handleNoteChange={handleNoteChange} initNewNote={initNewNote}/>
+            <Togglable buttonLabel="new note">
+              <NoteForm createNote={addNote}/>
+            </Togglable>
         </div>
         }
       <div>
@@ -174,18 +150,5 @@ const Part2a = () => {
         <br />
         <em>Note app, Department of Computer Science, University of Helsinki 2023</em>
       </div>
-    )
-  }
-
-  const NoteForm = ({addNote, newNote, handleNoteChange, initNewNote}) => {
-    return (
-      <form onSubmit={addNote}>
-        <input
-          value={newNote}
-          onChange={handleNoteChange}
-          placeholder={initNewNote}
-        />
-        <button type="submit">save</button>
-      </form>
     )
   }
