@@ -2,7 +2,8 @@ module.exports = {
   'env': {
     'browser': true,
     'es2021': true,
-    'jest/globals': true
+    'jest/globals': true,
+    'cypress/globals': true
   },
   'extends': [
     'eslint:recommended',
@@ -31,7 +32,8 @@ module.exports = {
   'plugins': [
     'react',
     'react-refresh',
-    'jest'
+    'jest',
+    'cypress'
   ],
   'rules': {
     'indent': [
