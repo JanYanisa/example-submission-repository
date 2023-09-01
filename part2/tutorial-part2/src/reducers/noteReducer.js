@@ -1,4 +1,5 @@
 const noteReducer = (state = [], action) => {
+  console.log('state', state)
   switch(action.type) {
   case 'NEW_NOTE':
     return [...state, action.payload]
